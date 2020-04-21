@@ -1,0 +1,8 @@
+{
+    "REGION": "us-east-1",
+    "REDSHIFT_HOST": "database-1.clyjrfzdyg83.us-east-2.rds.amazonaws.com",
+    "REDSHIFT_PORT": "5432",
+    "REDSHIFT_DBNAME": "postgres",
+    "REDSHIFT_USERNAME": "postgres",
+    "REDSHIFT_PASSWORD": "superstar123"
+}

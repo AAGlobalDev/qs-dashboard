@@ -4,7 +4,9 @@ import quandl
 import pandas as pd
 import datetime
 import psycopg2
-
+import os
+import time
+import json
 
 ###---------------------------------------------------------------------------------------------------------------------------------------------------
 #Remove ARGS
@@ -20,7 +22,7 @@ quandl.ApiConfig.api_key = 'wakoMoaSST3pXnJjAWc6'
 ###---------------------------------------------------------------------------------------------------------------------------------------------------
 
 #Configure Date Window
-startdate = '2020-04-10'
+startdate = '2020-04-01'
 enddate = datetime.date.today()
 daterange = pd.date_range(startdate, enddate).tolist()
 daterange=[str(i) for i in daterange]
@@ -113,90 +115,104 @@ stocks = ['IGV','SMH','SPY','QQQ','IWM','RSX','FEZ','EWA','EWC','EWI','EWG', 'EW
 #10 day Implied by Skew Point
 skews10d = [IV5D10,IV25D10,IV50D10,IV75D10,IV95D10]
 
-TenDayIV = quandl.get_table('ORATS/VOL', tradedate= daterange, ticker= stocks, qopts={'columns':['ticker','tradedate',skews10d]}, paginate=True)
 
-#TenDayIV.to_csv (r'export_dataframe.csv', index = False, header=True)
+def handler():
+    TenDayIV = quandl.get_table('ORATS/VOL', tradedate= daterange, ticker= stocks, qopts={'columns':['ticker','tradedate',skews10d]}, paginate=True)
 
-blankIndex=[''] * len(TenDayIV)
-TenDayIV.index=blankIndex
+    #TenDayIV.to_csv (r'export_dataframe.csv', index = False, header=True)
 
-TenDayIV = TenDayIV.pivot_table(index=['tradedate'], columns=['ticker'], values= skews10d).fillna(0)
+    blankIndex=[''] * len(TenDayIV)
+    TenDayIV.index=blankIndex
 
-
-###---------------------------------------------------------------------------------------------------------------------------------------------------
-#Build Data Frames for Realized Volatility
-###---------------------------------------------------------------------------------------------------------------------------------------------------
-#Intra-Day Realized
-
-IntradayRV = [HVID10,HVID20,HVID60,HVID120,HVID252]
-
-IDRV = quandl.get_table('ORATS/VOL', tradedate= daterange, ticker= stocks, qopts={'columns':['ticker','tradedate',IntradayRV]}, paginate=True)
-
-#IDRV.to_csv (r'IDRV.csv', index = False, header=True)
-blankIndex=[''] * len(IDRV)
-IDRV.index=blankIndex
-
-IDRV = IDRV.pivot_table(index=['tradedate'], columns=['ticker'], values= IntradayRV).fillna(0)
-
-###---------------------------------------------------------------------------------------------------------------------------------------------------
-#Build IV-RV Analysis DataFrames
-###---------------------------------------------------------------------------------------------------------------------------------------------------
-
-#10 Day Close to Close vs 10 Day ATM IV
-#Calculate 10D ATM IV
-TenDayATM = TenDayIV[IV50D10]
-
-#10 Day Intra-Day RV vs 10 Day IV
-#Calculate 10D Intra-day RV
-TenDayIntraDayRV = IDRV[HVID10]
-#Find the Difference between IV and RV
-TenDayIntraDayIVRVSpread = TenDayATM.subtract(TenDayIntraDayRV, fill_value=0)
-
-print(TenDayIntraDayIVRVSpread.squeeze())
-###--------------------------------------------------------------------------------------------------------------------------------------------------
-#Heatmap Outputssns.set(font_scale=2) # font size 2
-###--------------------------------------------------------------------------------------------------------------------------------------------------
-
-#10 Day ATM IV vs 10 Day RV (Intra-Day)
-TenDayIntraDayIVRVSpread.index = TenDayIntraDayIVRVSpread.index.strftime('%m/%d/%Y')
-
-date_list = TenDayIntraDayIVRVSpread.index.tolist()
-print(date_list)
-stocks_list = TenDayIntraDayIVRVSpread.columns.values.tolist()
-print(stocks_list)
-values_list = TenDayIntraDayIVRVSpread.values.tolist()
-print(values_list)
+    TenDayIV = TenDayIV.pivot_table(index=['tradedate'], columns=['ticker'], values= skews10d).fillna(0)
 
 
+    ###---------------------------------------------------------------------------------------------------------------------------------------------------
+    #Build Data Frames for Realized Volatility
+    ###---------------------------------------------------------------------------------------------------------------------------------------------------
+    #Intra-Day Realized
 
-con = psycopg2.connect(host="database-1.clyjrfzdyg83.us-east-2.rds.amazonaws.com",
-                           port=5432, database="postgres", user="postgres", password="superstar123")
+    IntradayRV = [HVID10,HVID20,HVID60,HVID120,HVID252]
 
-############ Drop Table If Exists...
-cur = con.cursor()
-cur.execute('''DROP TABLE IF EXISTS demotable;''')
-con.commit()
+    IDRV = quandl.get_table('ORATS/VOL', tradedate= daterange, ticker= stocks, qopts={'columns':['ticker','tradedate',IntradayRV]}, paginate=True)
 
-cur = con.cursor()
-cur.execute('''CREATE TABLE IF NOT EXISTS demotable (ticker CHAR(5), tradedate DATE, value FLOAT);''')
-con.commit()
+    #IDRV.to_csv (r'IDRV.csv', index = False, header=True)
+    blankIndex=[''] * len(IDRV)
+    IDRV.index=blankIndex
 
-ipos = 0
-jpos = 0
-for tradedate in date_list:
-    for ticker in stocks_list:
-        print("{}={}+++++++++++++++".format(jpos, ipos))
-        value = values_list[jpos][ipos]
-        print("{}__{}__{}___".format(ticker, tradedate, value))
+    IDRV = IDRV.pivot_table(index=['tradedate'], columns=['ticker'], values= IntradayRV).fillna(0)
 
-        cur.execute(
-            "INSERT INTO demotable (ticker, tradedate, value) "
-            "VALUES ('{0}', '{1}', '{2}')".format(ticker, tradedate, value));
-        con.commit()
+    ###---------------------------------------------------------------------------------------------------------------------------------------------------
+    #Build IV-RV Analysis DataFrames
+    ###---------------------------------------------------------------------------------------------------------------------------------------------------
 
-        ipos = ipos + 1
-    jpos = jpos + 1
+    #10 Day Close to Close vs 10 Day ATM IV
+    #Calculate 10D ATM IV
+    TenDayATM = TenDayIV[IV50D10]
+
+    #10 Day Intra-Day RV vs 10 Day IV
+    #Calculate 10D Intra-day RV
+    TenDayIntraDayRV = IDRV[HVID10]
+    #Find the Difference between IV and RV
+    TenDayIntraDayIVRVSpread = TenDayATM.subtract(TenDayIntraDayRV, fill_value=0)
+
+    # print(TenDayIntraDayIVRVSpread.squeeze())
+    ###--------------------------------------------------------------------------------------------------------------------------------------------------
+    #Heatmap Outputssns.set(font_scale=2) # font size 2
+    ###--------------------------------------------------------------------------------------------------------------------------------------------------
+
+    #10 Day ATM IV vs 10 Day RV (Intra-Day)
+    TenDayIntraDayIVRVSpread.index = TenDayIntraDayIVRVSpread.index.strftime('%m/%d/%Y')
+
+    date_list = TenDayIntraDayIVRVSpread.index.tolist()
+    # print(date_list)
+    stocks_list = TenDayIntraDayIVRVSpread.columns.values.tolist()
+    # print(stocks_list)
+    values_list = TenDayIntraDayIVRVSpread.values.tolist()
+    # print(values_list)
+
+
+    with open('config.json') as json_file:
+        config = json.load(json_file)
+    con = psycopg2.connect(
+        host=config['REDSHIFT_HOST'],
+        port=config['REDSHIFT_PORT'],
+        database=config['REDSHIFT_DBNAME'],
+        user=config['REDSHIFT_USERNAME'],
+        password=config['REDSHIFT_PASSWORD']
+    )
+
+    # con = psycopg2.connect(host="database-1.clyjrfzdyg83.us-east-2.rds.amazonaws.com",
+    #                            port=5432, database="postgres", user="postgres", password="superstar123")
+
+    ############ Drop Table If Exists...
+    cur = con.cursor()
+    cur.execute('''DROP TABLE IF EXISTS demotable;''')
+    con.commit()
+
+    cur = con.cursor()
+    cur.execute('''CREATE TABLE IF NOT EXISTS demotable (ticker CHAR(5), tradedate DATE, value FLOAT);''')
+    con.commit()
+
     ipos = 0
+    jpos = 0
+    for tradedate in date_list:
+        for ticker in stocks_list:
+            print("{}={}+++++++++++++++".format(jpos, ipos))
+            value = values_list[jpos][ipos]
+            print("{}__{}__{}___".format(ticker, tradedate, value))
 
-con.commit()
-con.close()
+            cur.execute(
+                "INSERT INTO demotable (ticker, tradedate, value) "
+                "VALUES ('{0}', '{1}', '{2}')".format(ticker, tradedate, value));
+            con.commit()
+
+            ipos = ipos + 1
+        jpos = jpos + 1
+        ipos = 0
+
+    con.commit()
+    con.close()
+
+
+handler()
