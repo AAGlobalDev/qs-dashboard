@@ -1,5 +1,5 @@
 {
-  "name": "sls-yelp-scrapper",
+  "name": "qs-dashboard",
   "version": "1.0.0",
   "description": "",
   "dependencies": {
@@ -10,6 +10,6 @@
     "serverless-python-requirements": "^5.0.1",
     "serverless-pseudo-parameters": "^2.5.0"
   },
-  "author": "Mateus Badalotti",
+  "author": "Jean Fabio D.",
   "license": "ISC"
 }

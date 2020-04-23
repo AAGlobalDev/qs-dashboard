@@ -1,4 +1,4 @@
-service: QSDASHBOARD
+service: QS-DASHBOARD
 
 provider:
   name: aws
@@ -29,9 +29,9 @@ package:
 
 functions:
   handler:
-    handler: demo.handler
-    name: qsdashboard
-    description: quicksight dashboard
+    handler: handler.handler
+    name: qs-dashboard
+    description: Daily updating RDS PostgreSQL
     timeout: 600
     reservedConcurrency: 1
     events:
