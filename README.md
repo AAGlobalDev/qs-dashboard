@@ -2,7 +2,7 @@
 
 1. ###### Clone repository from github.
 
-    `git clone  https://github.com/mbpup/sls-yelp-scrapper.git`
+    `git clone  https://github.com/test.git`
     
 2. ###### Create virtualenv
 

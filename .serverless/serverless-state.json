@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "QSDASHBOARD",
+    "service": "QS-DASHBOARD",
     "serviceObject": {
-      "name": "QSDASHBOARD"
+      "name": "QS-DASHBOARD"
     },
     "provider": {
       "stage": "test",
@@ -14,7 +14,7 @@
       "environment": {
         "REDSHIFT_HOST": "database-1.clyjrfzdyg83.us-east-2.rds.amazonaws.com",
         "REDSHIFT_PORT": "5432",
-        "REDSHIFT_DBNAME": "postgres",
+        "REDSHIFT_DBNAME": "mydb",
         "REDSHIFT_USERNAME": "postgres",
         "REDSHIFT_PASSWORD": "superstar123"
       },
@@ -81,7 +81,7 @@
           "HandlerLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/qsdashboard"
+              "LogGroupName": "/aws/lambda/qs-dashboard"
             }
           },
           "IamRoleLambdaExecution": {
@@ -109,7 +109,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "QSDASHBOARD-test",
+                        "QS-DASHBOARD-test",
                         "lambda"
                       ]
                     ]
@@ -125,7 +125,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/qsdashboard:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/qs-dashboard:*"
                           }
                         ]
                       },
@@ -136,7 +136,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/qsdashboard:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/qs-dashboard:*:*"
                           }
                         ]
                       }
@@ -149,7 +149,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "QSDASHBOARD-test",
+                    "QS-DASHBOARD-test",
                     {
                       "Ref": "AWS::Region"
                     },
@@ -166,10 +166,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/QSDASHBOARD/test/1587456157842-2020-04-21T08:02:37.842Z/QSDASHBOARD.zip"
+                "S3Key": "serverless/QS-DASHBOARD/test/1587623366787-2020-04-23T06:29:26.787Z/QS-DASHBOARD.zip"
               },
-              "FunctionName": "qsdashboard",
-              "Handler": "demo.handler",
+              "FunctionName": "qs-dashboard",
+              "Handler": "handler.handler",
               "MemorySize": 1024,
               "Role": {
                 "Fn::GetAtt": [
@@ -179,12 +179,12 @@
               },
               "Runtime": "python3.6",
               "Timeout": 600,
-              "Description": "quicksight dashboard",
+              "Description": "Daily updating RDS PostgreSQL",
               "Environment": {
                 "Variables": {
                   "REDSHIFT_HOST": "database-1.clyjrfzdyg83.us-east-2.rds.amazonaws.com",
                   "REDSHIFT_PORT": "5432",
-                  "REDSHIFT_DBNAME": "postgres",
+                  "REDSHIFT_DBNAME": "mydb",
                   "REDSHIFT_USERNAME": "postgres",
                   "REDSHIFT_PASSWORD": "superstar123"
                 }
@@ -196,21 +196,21 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "HandlerLambdaVersionIp4rlZNC54ZcZx4CFkZDy7lw6lBryZnkKr8n6yqbwE": {
+          "HandlerLambdaVersionxdl0k7euSAGXlQcHTiEmZvBxA02R8Ud2vQLfKlEu0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "HandlerLambdaFunction"
               },
-              "CodeSha256": "gxBF4hLYozMfml50ssUuC4qtl4cQ5Pw+t0mQ3ivRC7g=",
-              "Description": "quicksight dashboard"
+              "CodeSha256": "pKGU8NgymPrPObhGyizqRG1UVMQ8OjNjJFuw3ly7VSM=",
+              "Description": "Daily updating RDS PostgreSQL"
             }
           },
           "HandlerEventsRuleSchedule1": {
             "Type": "AWS::Events::Rule",
             "Properties": {
-              "ScheduleExpression": "rate(1 day)",
+              "ScheduleExpression": "rate(15 minutes)",
               "State": "ENABLED",
               "Targets": [
                 {
@@ -254,7 +254,7 @@
           "HandlerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HandlerLambdaVersionIp4rlZNC54ZcZx4CFkZDy7lw6lBryZnkKr8n6yqbwE"
+              "Ref": "HandlerLambdaVersionxdl0k7euSAGXlQcHTiEmZvBxA02R8Ud2vQLfKlEu0"
             }
           }
         }
@@ -336,30 +336,30 @@
     "pluginsData": {},
     "functions": {
       "handler": {
-        "handler": "demo.handler",
-        "name": "qsdashboard",
-        "description": "quicksight dashboard",
+        "handler": "handler.handler",
+        "name": "qs-dashboard",
+        "description": "Daily updating RDS PostgreSQL",
         "timeout": 600,
         "reservedConcurrency": 1,
         "events": [
           {
-            "schedule": "rate(1 day)"
+            "schedule": "rate(15 minutes)"
           }
         ],
         "package": {},
         "memory": 1024,
         "runtime": "python3.6",
         "vpc": {},
-        "versionLogicalId": "HandlerLambdaVersionIp4rlZNC54ZcZx4CFkZDy7lw6lBryZnkKr8n6yqbwE"
+        "versionLogicalId": "HandlerLambdaVersionxdl0k7euSAGXlQcHTiEmZvBxA02R8Ud2vQLfKlEu0"
       }
     },
     "serviceFilename": "serverless.yml",
     "layers": {},
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/home/star/Desktop/QuickSight/qsDashboard/.serverless/QSDASHBOARD.zip"
+    "artifact": "/home/star/Desktop/QS_Project/qs-dashboard/.serverless/QS-DASHBOARD.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/QSDASHBOARD/test/1587456157842-2020-04-21T08:02:37.842Z",
-    "artifact": "QSDASHBOARD.zip"
+    "artifactDirectoryName": "serverless/QS-DASHBOARD/test/1587623366787-2020-04-23T06:29:26.787Z",
+    "artifact": "QS-DASHBOARD.zip"
   }
 }
