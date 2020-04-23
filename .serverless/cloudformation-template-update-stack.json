@@ -144,7 +144,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/QS-DASHBOARD/test/1587623366787-2020-04-23T06:29:26.787Z/QS-DASHBOARD.zip"
+          "S3Key": "serverless/QS-DASHBOARD/test/1587628064628-2020-04-23T07:47:44.628Z/QS-DASHBOARD.zip"
         },
         "FunctionName": "qs-dashboard",
         "Handler": "handler.handler",
@@ -174,14 +174,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "HandlerLambdaVersionxdl0k7euSAGXlQcHTiEmZvBxA02R8Ud2vQLfKlEu0": {
+    "HandlerLambdaVersionXTG0fxZNol3zIVawggJYCKNNvVduv6sedprTB9Sk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HandlerLambdaFunction"
         },
-        "CodeSha256": "pKGU8NgymPrPObhGyizqRG1UVMQ8OjNjJFuw3ly7VSM=",
+        "CodeSha256": "6BV614GuyDQbXiESi/5yrgSRW4x329cJV5bqkTigv00=",
         "Description": "Daily updating RDS PostgreSQL"
       }
     },
@@ -232,7 +232,7 @@
     "HandlerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HandlerLambdaVersionxdl0k7euSAGXlQcHTiEmZvBxA02R8Ud2vQLfKlEu0"
+        "Ref": "HandlerLambdaVersionXTG0fxZNol3zIVawggJYCKNNvVduv6sedprTB9Sk"
       }
     }
   }
