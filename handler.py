@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 import psycopg2
 import json
-
+import os
 ###---------------------------------------------------------------------------------------------------------------------------------------------------
 #Remove ARGS
 def warn(*args, **kwargs):
@@ -227,23 +227,30 @@ def main():
     #values_list = TenDayIntraDayIVRVSpread.values.tolist()
 
 
-    #with open('config.json') as json_file:
+    # with open('config.json') as json_file:
     #    config = json.load(json_file)
-    #con = psycopg2.connect(
+    # con = psycopg2.connect(
     #    host=config['REDSHIFT_HOST'],
     #    port=config['REDSHIFT_PORT'],
     #    database=config['REDSHIFT_DBNAME'],
     #    user=config['REDSHIFT_USERNAME'],
     #    password=config['REDSHIFT_PASSWORD']
-    #)
+    # )
 
     con = psycopg2.connect(
-        host=os.environ['REDSHIFT_HOST'],
-        port=os.environ['REDSHIFT_PORT'],
-        database=os.environ['REDSHIFT_DBNAME'],
-        user=os.environ['REDSHIFT_USERNAME'],
-        password=os.environ['REDSHIFT_PASSWORD']
+       host=os.environ['REDSHIFT_HOST'],
+       port=os.environ['REDSHIFT_PORT'],
+       database=os.environ['REDSHIFT_DBNAME'],
+       user=os.environ['REDSHIFT_USERNAME'],
+       password=os.environ['REDSHIFT_PASSWORD']
     )
+
+    # con = psycopg2.connect(
+    #     host='database-1.clyjrfzdyg83.us-east-2.rds.amazonaws.com',
+    #     port='5432',
+    #     database='mydb',
+    #     user='postgres',
+    #     password='superstar123')
 
     cur = con.cursor()
     cur.execute('''DROP TABLE IF EXISTS demotable;''')

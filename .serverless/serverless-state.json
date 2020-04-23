@@ -166,7 +166,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/QS-DASHBOARD/test/1587628064628-2020-04-23T07:47:44.628Z/QS-DASHBOARD.zip"
+                "S3Key": "serverless/QS-DASHBOARD/test/1587634023678-2020-04-23T09:27:03.678Z/QS-DASHBOARD.zip"
               },
               "FunctionName": "qs-dashboard",
               "Handler": "handler.handler",
@@ -196,21 +196,21 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "HandlerLambdaVersionXTG0fxZNol3zIVawggJYCKNNvVduv6sedprTB9Sk": {
+          "HandlerLambdaVersion81Xcddu92e1MMkOZLUqgulfUFJF5JRKHOfA23iTj1vs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "HandlerLambdaFunction"
               },
-              "CodeSha256": "6BV614GuyDQbXiESi/5yrgSRW4x329cJV5bqkTigv00=",
+              "CodeSha256": "51xBIJUKJJ3NOnvM1TP5FUz8woLIKnMNiN05DahEJx8=",
               "Description": "Daily updating RDS PostgreSQL"
             }
           },
           "HandlerEventsRuleSchedule1": {
             "Type": "AWS::Events::Rule",
             "Properties": {
-              "ScheduleExpression": "rate(15 minutes)",
+              "ScheduleExpression": "rate(30 minutes)",
               "State": "ENABLED",
               "Targets": [
                 {
@@ -254,7 +254,7 @@
           "HandlerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "HandlerLambdaVersionXTG0fxZNol3zIVawggJYCKNNvVduv6sedprTB9Sk"
+              "Ref": "HandlerLambdaVersion81Xcddu92e1MMkOZLUqgulfUFJF5JRKHOfA23iTj1vs"
             }
           }
         }
@@ -343,14 +343,14 @@
         "reservedConcurrency": 1,
         "events": [
           {
-            "schedule": "rate(15 minutes)"
+            "schedule": "rate(30 minutes)"
           }
         ],
         "package": {},
         "memory": 1024,
         "runtime": "python3.6",
         "vpc": {},
-        "versionLogicalId": "HandlerLambdaVersionXTG0fxZNol3zIVawggJYCKNNvVduv6sedprTB9Sk"
+        "versionLogicalId": "HandlerLambdaVersion81Xcddu92e1MMkOZLUqgulfUFJF5JRKHOfA23iTj1vs"
       }
     },
     "serviceFilename": "serverless.yml",
@@ -359,7 +359,7 @@
     "artifact": "/home/star/Desktop/QS_Project/qs-dashboard/.serverless/QS-DASHBOARD.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/QS-DASHBOARD/test/1587628064628-2020-04-23T07:47:44.628Z",
+    "artifactDirectoryName": "serverless/QS-DASHBOARD/test/1587634023678-2020-04-23T09:27:03.678Z",
     "artifact": "QS-DASHBOARD.zip"
   }
 }
